@@ -48,6 +48,42 @@ const trendIcons = {
 
 const keywordTone = ["blue", "purple", "pink", "green", "teal", "violet"];
 
+const outcomeTemplates = [
+  "Apply {domain} concepts to solve a practical {course} challenge from brief to presentation.",
+  "Build a portfolio-ready {domain} artefact that demonstrates planning, implementation, testing, and reflection.",
+  "Evaluate {domain} solutions using clear criteria, feedback, and evidence from real learner or stakeholder needs.",
+  "Communicate {domain} decisions in a concise format for non-specialist stakeholders and peer review.",
+  "Use {keywords} to connect the source course content with a current short-programme opportunity.",
+  "Design an ethical and accessible {domain} workflow that can be adapted for professional practice.",
+];
+
+const weekTopicTemplates = {
+  1: [
+    "{domain} Foundations - Mapping core concepts, tools, and terminology through guided examples",
+    "Readiness Lab - Preparing source materials and documenting assumptions for {course}",
+    "Starter Workflow - Reproducing a simple end-to-end task with instructor feedback",
+    "Context Sprint - Connecting {keywords} to learner needs and industry examples",
+  ],
+  2: [
+    "Applied Studio - Building and comparing practical {domain} solutions with peer feedback",
+    "Evaluation Lab - Testing outputs against clear success criteria and improving decisions",
+    "Case Challenge - Applying {course} methods to a realistic short-programme scenario",
+    "Storytelling Sprint - Turning technical work into stakeholder-ready recommendations",
+  ],
+  3: [
+    "Prototype Sprint - Combining weekly skills into a working learner-facing project",
+    "Iteration Clinic - Using feedback, testing, and evidence to improve the project",
+    "Advanced Practice - Extending {domain} work with {keywords} and independent choices",
+    "Portfolio Workshop - Packaging progress into a clear professional artefact",
+  ],
+  default: [
+    "Capstone Build - Completing a polished {domain} project with documented decisions",
+    "Showcase Review - Presenting outcomes, trade-offs, and next steps to peers",
+    "Implementation Clinic - Refining the final work against assessment criteria",
+    "Reflection Lab - Connecting the finished project to future study or work practice",
+  ],
+};
+
 function App() {
   const [bootstrap, setBootstrap] = useState({
     trends: [],
@@ -408,6 +444,73 @@ function App() {
           {activeStep === "income" && planGenerated && <IncomeScreen plan={plan} />}
         </section>
       </main>
+    </div>
+  );
+}
+
+function programmeDomain(plan) {
+  return plan.trend?.trend || plan.programme?.basedOn || plan.course?.course_name || "the topic";
+}
+
+function programmeCourseName(plan) {
+  return plan.course?.course_name || plan.programme?.basedOn || "the source course";
+}
+
+function programmeKeywords(plan) {
+  const keywords = plan.trend?.keywords?.length ? plan.trend.keywords : plan.course?.keywords || [];
+  return keywords.slice(0, 3).join(", ") || programmeDomain(plan).toLowerCase();
+}
+
+function fillSuggestionTemplate(template, plan) {
+  return template
+    .replaceAll("{domain}", programmeDomain(plan))
+    .replaceAll("{course}", programmeCourseName(plan))
+    .replaceAll("{keywords}", programmeKeywords(plan));
+}
+
+function weekNumber(weekLabel) {
+  const match = String(weekLabel).match(/\d+/);
+  return match ? Number(match[0]) : 0;
+}
+
+function uniqueSuggestions(items, currentValue = "", limit = 4) {
+  const current = currentValue.trim().toLowerCase();
+  const seen = new Set();
+  return items
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .filter((item) => {
+      const key = item.toLowerCase();
+      if (key === current || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, limit);
+}
+
+function outcomeSuggestions(plan, index, currentValue) {
+  const rotated = [...outcomeTemplates.slice(index), ...outcomeTemplates.slice(0, index)];
+  return uniqueSuggestions(rotated.map((template) => fillSuggestionTemplate(template, plan)), currentValue, 4);
+}
+
+function topicSuggestions(plan, weekLabel, index, currentValue) {
+  const templates = weekTopicTemplates[weekNumber(weekLabel)] || weekTopicTemplates.default;
+  const rotated = [...templates.slice(index), ...templates.slice(0, index), ...weekTopicTemplates.default];
+  return uniqueSuggestions(rotated.map((template) => fillSuggestionTemplate(template, plan)), currentValue, 4);
+}
+
+function SuggestionOptions({ label, options, onSelect }) {
+  if (!options.length) return null;
+  return (
+    <div className="suggestion-panel">
+      <span>{label}</span>
+      <div className="suggestion-options">
+        {options.map((option) => (
+          <button type="button" key={option} onClick={() => onSelect(option)}>
+            {option}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -864,11 +967,18 @@ function ProgrammeScreen({ plan, approach, onApproachChange, onProgrammeChange, 
         </div>
         <div className="programme-editor-list">
           {(programme.outcomes || []).map((outcome, index) => (
-            <div className="editable-row" key={`${outcome}-${index}`}>
-              <input value={outcome} onChange={(event) => updateOutcome(index, event.target.value)} />
-              <button type="button" onClick={() => removeOutcome(index)} aria-label="Remove outcome">
-                x
-              </button>
+            <div className="editable-block" key={`outcome-${index}`}>
+              <div className="editable-row">
+                <input value={outcome} onChange={(event) => updateOutcome(index, event.target.value)} />
+                <button type="button" onClick={() => removeOutcome(index)} aria-label="Remove outcome">
+                  x
+                </button>
+              </div>
+              <SuggestionOptions
+                label="Other outcome options"
+                options={outcomeSuggestions(plan, index, outcome)}
+                onSelect={(value) => updateOutcome(index, value)}
+              />
             </div>
           ))}
         </div>
@@ -885,11 +995,18 @@ function ProgrammeScreen({ plan, approach, onApproachChange, onProgrammeChange, 
             </div>
             <div className="programme-editor-list">
               {topics.map((topic, index) => (
-                <div className="editable-row" key={`${week}-${index}`}>
-                  <textarea value={topic} onChange={(event) => updateWeekTopic(week, index, event.target.value)} />
-                  <button type="button" onClick={() => removeWeekTopic(week, index)} aria-label="Remove topic">
-                    x
-                  </button>
+                <div className="editable-block" key={`${week}-${index}`}>
+                  <div className="editable-row">
+                    <textarea value={topic} onChange={(event) => updateWeekTopic(week, index, event.target.value)} />
+                    <button type="button" onClick={() => removeWeekTopic(week, index)} aria-label="Remove topic">
+                      x
+                    </button>
+                  </div>
+                  <SuggestionOptions
+                    label="Other topic options"
+                    options={topicSuggestions(plan, week, index, topic)}
+                    onSelect={(value) => updateWeekTopic(week, index, value)}
+                  />
                 </div>
               ))}
             </div>

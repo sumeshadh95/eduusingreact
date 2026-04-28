@@ -1086,6 +1086,11 @@ button:disabled {
   margin-top: 14px;
 }
 
+.editable-block {
+  display: grid;
+  gap: 8px;
+}
+
 .editable-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 30px;
@@ -1127,6 +1132,50 @@ button:disabled {
   color: #6d7280;
   background: #ffffff;
   font-weight: 800;
+}
+
+.suggestion-panel {
+  display: grid;
+  gap: 7px;
+  padding: 9px 10px;
+  border: 1px dashed rgba(0, 59, 142, 0.2);
+  border-radius: 10px;
+  background: rgba(0, 59, 142, 0.035);
+}
+
+.suggestion-panel > span {
+  margin: 0;
+  color: #6d7280;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.suggestion-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.suggestion-options button {
+  width: auto;
+  height: auto;
+  min-height: 30px;
+  max-width: 100%;
+  padding: 6px 9px;
+  border: 1px solid rgba(0, 59, 142, 0.18);
+  border-radius: 8px;
+  color: #0b326b;
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.suggestion-options button:hover {
+  border-color: var(--yellow);
+  background: rgba(253, 185, 42, 0.12);
 }
 
 .week-grid {
