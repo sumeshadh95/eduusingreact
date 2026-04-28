@@ -2,20 +2,14 @@
 
 import base64
 
+from services.ai_inline_image_finder import first_inline_image
+
 
 def extract_inline_image(data: dict) -> tuple:
-    inline = next((item for item in inline_images(data) if item.get("data")), None)
+    inline = first_inline_image(data)
     if not inline:
         raise RuntimeError("Gemini returned no image data.")
     return decoded_image(inline["data"], inline.get("mimeType") or inline.get("mime_type"))
-
-
-def inline_images(data: dict) -> list[dict]:
-    return [
-        part.get("inlineData") or part.get("inline_data") or {}
-        for candidate in data.get("candidates") or []
-        for part in candidate.get("content", {}).get("parts", [])
-    ]
 
 
 def decoded_image(encoded: str, mime_type: str = None) -> tuple:
