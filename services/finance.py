@@ -1,7 +1,7 @@
 """
 finance.py — Income estimation formulas.
 
-Pure math, no streamlit imports.
+Pure math helper.
 """
 
 import math

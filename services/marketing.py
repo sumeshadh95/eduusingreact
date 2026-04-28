@@ -2,7 +2,6 @@
 marketing.py — Static marketing copy for the generated programme.
 
 All text is verbatim from the implementation brief.
-No streamlit imports.
 """
 
 

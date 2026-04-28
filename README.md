@@ -2,7 +2,7 @@
 
 **Turning Xamk courses into trend-based year-round short programmes.**
 
-CoursePilot AI is a Streamlit and React demo app that shows how AI can turn a trending topic into a Xamk short programme (3 ECTS), summarize the source course material with Gemini or OpenAI, recommend a duration and price, personalize the learning experience for a nursing student, generate marketing content, and estimate income end-to-end in a single live walkthrough.
+CoursePilot AI is a React + FastAPI demo app that shows how AI can turn a trending topic into a Xamk short programme (3 ECTS), summarize the source course material with Gemini or OpenAI, recommend a duration and price, personalize the learning experience for a nursing student, generate marketing content, and estimate income end-to-end in a single live walkthrough.
 
 ## Quick Start
 
@@ -33,15 +33,9 @@ cp .env.example .env
 
 > **Note:** The app works fully offline without an API key. Hardcoded fallback content is used when the key is missing or the API call fails.
 
-### 4. Run the original Streamlit app
+### 4. Run the React / Vite app
 
-```bash
-streamlit run app.py
-```
-
-## React / Vite Frontend
-
-This copy also includes a migrated React + Vite frontend with a Xamk-inspired UI kit style. The React UI calls a local FastAPI backend (`backend.py`) that reuses the original `services/*` logic, so Gemini/OpenAI generation stays server-side and still reads the key from `.env`.
+The React UI calls a local FastAPI backend (`backend.py`) that reuses the `services/*` logic, so Gemini/OpenAI generation stays server-side and still reads the key from `.env`.
 
 ```bash
 pip install -r requirements.txt
@@ -87,7 +81,8 @@ npm run build
 ## Tech Stack
 
 - Python 3.10+
-- Streamlit
+- FastAPI
+- Uvicorn
 - python-dotenv
 - requests
 - openai (Python SDK, optional fallback provider)

@@ -1,8 +1,8 @@
 """
 React API backend for CoursePilot AI.
 
-The React app keeps the new UI. This file keeps the original Streamlit demo's
-business behavior by wrapping the existing services/* modules and reading the
+The React app keeps the new UI. This file keeps the demo's business behavior
+by wrapping the existing services/* modules and reading the
 Gemini/OpenAI key from .env on the server side.
 """
 

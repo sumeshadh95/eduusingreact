@@ -1,7 +1,7 @@
 """
 course_generator.py — Generate the short programme from matched course data.
 
-No streamlit imports.
+Framework-independent.
 """
 
 

@@ -1,8 +1,7 @@
 """
 data_loader.py — Load mock JSON data and course material text files.
 
-Only module that does file I/O (besides ai_service HTTP).
-No streamlit imports.
+Only module that does file I/O besides AI HTTP calls.
 """
 
 import json

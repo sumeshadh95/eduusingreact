@@ -9,7 +9,6 @@ Buckets:
   >1500        → Very Large, 4 weeks
 
 ECTS is always 3.
-No streamlit imports.
 """
 
 

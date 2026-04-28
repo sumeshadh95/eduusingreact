@@ -2,7 +2,7 @@
 matcher.py — Match a trend to the best course by keyword intersection.
 
 Computes matching keywords via set intersection and derives a score.
-No streamlit imports.
+Framework-independent.
 """
 
 

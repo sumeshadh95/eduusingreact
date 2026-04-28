@@ -3,7 +3,6 @@ personalization.py — Personalized learning content.
 
 Provides AI-generated personalization with hardcoded nursing fallbacks.
 All fallback text is verbatim from the implementation brief.
-No streamlit imports.
 """
 
 from services import ai_service
