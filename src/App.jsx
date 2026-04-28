@@ -24,6 +24,8 @@ import {
 
 import { apiGet, apiPost } from "./api";
 import { computeFinance, steps } from "./demoLogic";
+import Logo from "../src/Logo.png";
+import BLogo from "../src/xamklogo.png";
 
 const socialImage = "/generated_assets/social_designed_1777373144.png";
 const brochureImage = "/generated_assets/brochure_designed_1777373132.png";
@@ -519,8 +521,7 @@ function Sidebar({ activeStep, activeIndex, onNavigate, planGenerated, provider 
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <BrandMark />
-        <span>CoursePilot AI</span>
+        <img src={BLogo} alt="Logo"  className="w-50"/>
       </div>
 
       <div className="ai-status">
@@ -571,8 +572,8 @@ function TopBar({ provider }) {
   return (
     <header className="topbar">
       <div className="topbar-title">
-        <BrandMark compact />
-        <strong>CoursePilot AI</strong>
+        <img src={BLogo} alt="Logo"  className="w-20"/>
+        
         <span>Turning Xamk courses into trend-based year-round short programmes</span>
       </div>
       <div className="topbar-meta">{provider?.hasKey ? `${provider.name} AI enabled` : "Fallback mode"}</div>

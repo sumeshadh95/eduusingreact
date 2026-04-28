@@ -11,11 +11,14 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.2.4",
     "@vitejs/plugin-react": "latest",
     "concurrently": "latest",
-    "vite": "latest",
+    "daisyui": "^5.5.19",
+    "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "lucide-react": "latest"
+    "tailwindcss": "^4.2.4",
+    "vite": "latest"
   }
 }
