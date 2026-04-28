@@ -1,7 +1,6 @@
 """AI marketing image generation."""
 
 import logging
-import time
 
 from services.ai_core import (
     _brief_error,
@@ -11,9 +10,10 @@ from services.ai_core import (
     _gemini_image_model_candidates,
     _get_provider_config,
     _imagen_model_candidates,
-    _is_image_access_error,
     _remember_error,
 )
+from services.ai_image_attempts import try_models
+from services.ai_marketing_image_prompts import marketing_image_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -30,78 +30,30 @@ def generate_marketing_image(
         return (None, None, True)
 
     prompt, aspect_ratio = marketing_image_prompt(programme_title, content, image_type)
-    imagen_result = try_models(
-        _imagen_model_candidates(),
-        lambda model: _generate_image_with_imagen(prompt, api_key=key, model=model, aspect_ratio=aspect_ratio),
-        attempts=2,
-        provider_name="Imagen",
-    )
+    imagen_result = generate_with_imagen_models(prompt, key, aspect_ratio)
     if imagen_result["image"]:
         return image_success(imagen_result)
-
-    gemini_result = try_models(
-        _gemini_image_model_candidates(),
-        lambda model: _generate_image_with_gemini(prompt, api_key=key, model=model),
-        attempts=3,
-        provider_name="Gemini",
-    )
+    gemini_result = generate_with_gemini_models(prompt, key)
     if gemini_result["image"]:
         return image_success(gemini_result)
     return image_failure(gemini_result, imagen_result)
 
 
-def marketing_image_prompt(programme_title: str, content: dict, image_type: str) -> tuple[str, str]:
-    if image_type == "social":
-        return (
-            f"""Create a beautiful, polished square social media image for Xamk's short programme "{programme_title}".
-Visual direction: modern university marketing, energetic game development theme, students designing prototypes with laptops and game controllers, subtle Finland/Xamk academic feel, clean composition, Xamk green and deep blue brand accents, readable space for caption overlay, no tiny unreadable text.
-Tagline inspiration: {content.get("tagline", "")}
-Style: professional, bright, credible, premium, demo-ready.""",
-            "1:1",
-        )
-    return (
-        f"""Create a beautiful professional brochure/pamphlet cover image for Xamk's short programme "{programme_title}".
-Visual direction: A4-style cover, game development sprint theme, creative technology classroom, prototype screens, approachable university continuing education, Xamk green and deep blue brand accents, clean layout space for title and dates, no tiny unreadable text.
-Website copy inspiration: {content.get("website", "")}
-Style: premium university brochure, polished, credible, demo-ready.""",
-        "3:4",
+def generate_with_imagen_models(prompt: str, key: str, aspect_ratio: str) -> dict:
+    return try_models(
+        _imagen_model_candidates(),
+        lambda model: _generate_image_with_imagen(prompt, api_key=key, model=model, aspect_ratio=aspect_ratio),
+        attempts=2,
+        provider_name="Imagen",
     )
 
 
-def try_models(models: list, generate_image, attempts: int, provider_name: str) -> dict:
-    result = {"image": None, "mime": None, "error": None, "access_error": None}
-    for model in models:
-        model_result = try_model(model, generate_image, attempts)
-        result["error"] = model_result["error"] or result["error"]
-        result["access_error"] = model_result["access_error"] or result["access_error"]
-        if model_result["image"]:
-            logger.info("%s image generated with %s.", provider_name, model)
-            return model_result
-    return result
-
-
-def try_model(model: str, generate_image, attempts: int) -> dict:
-    result = {"image": None, "mime": None, "error": None, "access_error": None}
-    for attempt in range(attempts):
-        try:
-            image_bytes, mime_type = generate_image(model)
-            result.update({"image": image_bytes, "mime": mime_type})
-            return result
-        except Exception as exc:
-            result["error"] = exc
-            result["access_error"] = result["access_error"] or (exc if _is_image_access_error(exc) else None)
-            if retryable_image_error(exc) and attempt < attempts - 1:
-                time.sleep(1 + attempt)
-                continue
-            return result
-    return result
-
-
-def retryable_image_error(error: Exception) -> bool:
-    detail = str(error).lower()
-    return any(
-        marker in detail
-        for marker in ["503", "high demand", "unavailable", "connection", "timeout", "temporarily"]
+def generate_with_gemini_models(prompt: str, key: str) -> dict:
+    return try_models(
+        _gemini_image_model_candidates(),
+        lambda model: _generate_image_with_gemini(prompt, api_key=key, model=model),
+        attempts=3,
+        provider_name="Gemini",
     )
 
 

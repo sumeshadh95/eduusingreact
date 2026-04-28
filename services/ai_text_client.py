@@ -1,14 +1,11 @@
-"""Text generation dispatch and JSON parsing."""
+"""Text generation dispatch."""
 
-import json
-import logging
-
-from services.ai_errors import brief_error, clear_error, remember_error
-from services.ai_gemini_text import generate_with_gemini_fallbacks
+from services.ai_errors import clear_error
+from services.ai_generation_failure import remember_generation_failure
+from services.ai_gemini_text import generate_with_gemini_model_fallbacks
+from services.ai_json_response import parse_json_response
 from services.ai_openai_text import generate_with_openai
 from services.ai_provider_config import get_provider_config
-
-logger = logging.getLogger(__name__)
 
 
 def generate_text(
@@ -45,7 +42,7 @@ def dispatch_text_generation(
     json_mode: bool,
 ) -> str:
     if provider == "gemini":
-        return generate_with_gemini_fallbacks(
+        return generate_with_gemini_model_fallbacks(
             key, model, system_prompt, user_prompt, max_tokens, temperature, json_mode
         )
     return generate_with_openai(
@@ -56,25 +53,3 @@ def dispatch_text_generation(
         max_tokens=max_tokens,
         temperature=temperature,
     )
-
-
-def remember_generation_failure(provider: str, error: Exception) -> None:
-    provider_name = "Gemini" if provider == "gemini" else "OpenAI"
-    logger.warning("%s generation failed (%s) - using fallback.", provider_name, error)
-    remember_error(brief_error(provider_name, f"{provider_name} generation failed", error))
-
-
-def parse_json_response(raw: str) -> dict:
-    if not raw:
-        return {}
-    return json.loads(strip_markdown_json(raw.strip()))
-
-
-def strip_markdown_json(raw: str) -> str:
-    if not raw.startswith("```"):
-        return raw
-    raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
-    if raw.endswith("```"):
-        raw = raw[:-3]
-    raw = raw.strip()
-    return raw[4:].strip() if raw.startswith("json") else raw

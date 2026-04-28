@@ -15,55 +15,38 @@ _BASE_DIR = Path(__file__).parent.parent
 
 def load_trends() -> list:
     """Load trends from data/trends.json. Returns [] on failure."""
-    path = _BASE_DIR / "data" / "trends.json"
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.warning("trends.json not found at %s", path)
-        return []
-    except json.JSONDecodeError:
-        logger.warning("trends.json is corrupt at %s", path)
-        return []
+    return load_json_list("trends.json")
 
 
 def load_courses() -> list:
     """Load courses from data/courses.json. Returns [] on failure."""
-    path = _BASE_DIR / "data" / "courses.json"
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.warning("courses.json not found at %s", path)
-        return []
-    except json.JSONDecodeError:
-        logger.warning("courses.json is corrupt at %s", path)
-        return []
+    return load_json_list("courses.json")
 
 
 def load_teachers() -> list:
     """Load teachers from data/teachers.json. Returns [] on failure."""
-    path = _BASE_DIR / "data" / "teachers.json"
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.warning("teachers.json not found at %s", path)
-        return []
-    except json.JSONDecodeError:
-        logger.warning("teachers.json is corrupt at %s", path)
-        return []
+    return load_json_list("teachers.json")
 
 
 def load_material(filename: str) -> str:
     """Load a course material text file from materials/. Returns '' on failure."""
     path = _BASE_DIR / "materials" / filename
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
+        return path.read_text(encoding="utf-8")
     except FileNotFoundError:
         logger.warning("Material file not found: %s", path)
         return ""
     except Exception as e:
         logger.warning("Error reading material file %s: %s", path, e)
         return ""
+
+
+def load_json_list(filename: str) -> list:
+    path = _BASE_DIR / "data" / filename
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        logger.warning("%s not found at %s", filename, path)
+    except json.JSONDecodeError:
+        logger.warning("%s is corrupt at %s", filename, path)
+    return []

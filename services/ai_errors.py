@@ -32,19 +32,35 @@ def get_last_error() -> str:
 def brief_error(provider: str, prefix: str, error: Exception) -> str:
     detail = str(error)
     lowered = detail.lower()
-    if "paid plan" in lowered or "upgrade your account" in lowered:
-        return (
-            f"{provider} image generation requires a paid/quota-enabled Gemini API "
-            "project for this model. Enable billing or use a key with image quota, "
-            "then click Generate again."
-        )
-    if "insufficient_quota" in lowered or "quota" in lowered or "billing" in lowered:
-        return (
-            f"{provider} returned a quota or billing error. Check the API key's "
-            "billing/quota, then click Regenerate with AI again."
-        )
-    if "api key not valid" in lowered or "invalid api key" in lowered or "permission" in lowered:
-        return f"{provider} rejected the API key. Check the key in the .env file."
-    if len(detail) > 220:
-        detail = detail[:217].rstrip() + "..."
-    return f"{prefix}: {detail}"
+    matched = next((handler for markers, handler in ERROR_HANDLERS if any(marker in lowered for marker in markers)), None)
+    return matched(provider) if matched else f"{prefix}: {short_detail(detail)}"
+
+
+def short_detail(detail: str) -> str:
+    return detail[:217].rstrip() + "..." if len(detail) > 220 else detail
+
+
+def paid_plan_message(provider: str) -> str:
+    return (
+        f"{provider} image generation requires a paid/quota-enabled Gemini API "
+        "project for this model. Enable billing or use a key with image quota, "
+        "then click Generate again."
+    )
+
+
+def quota_message(provider: str) -> str:
+    return (
+        f"{provider} returned a quota or billing error. Check the API key's "
+        "billing/quota, then click Regenerate with AI again."
+    )
+
+
+def invalid_key_message(provider: str) -> str:
+    return f"{provider} rejected the API key. Check the key in the .env file."
+
+
+ERROR_HANDLERS = [
+    (["paid plan", "upgrade your account"], paid_plan_message),
+    (["insufficient_quota", "quota", "billing"], quota_message),
+    (["api key not valid", "invalid api key", "permission"], invalid_key_message),
+]
