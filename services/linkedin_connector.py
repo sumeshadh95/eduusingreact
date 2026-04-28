@@ -2,7 +2,7 @@
 
 import os
 
-import requests
+from services.linkedin_http import fetch_linkedin_elements
 
 
 class LinkedInTalentConnector:
@@ -33,17 +33,7 @@ class LinkedInTalentConnector:
         return self.fetch_results(query)
 
     def fetch_results(self, query: str) -> tuple:
-        try:
-            response = requests.get(
-                self.endpoint,
-                headers=self.headers(),
-                params={"q": "search", "keywords": query},
-                timeout=20,
-            )
-            response.raise_for_status()
-            return (response.json().get("elements", []), "LinkedIn Talent Solutions connector returned results.")
-        except Exception as exc:
-            return ([], f"LinkedIn Talent Solutions search failed: {exc}")
+        return fetch_linkedin_elements(self.endpoint, self.headers(), query)
 
     def headers(self) -> dict:
         return {

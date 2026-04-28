@@ -1,5 +1,7 @@
 """Shared AI fallback messages and UI-facing error state."""
 
+from services.ai_error_matcher import error_message
+
 FALLBACK_SUMMARY = (
     "This course introduces the fundamentals of game development, covering "
     "game design principles, storytelling and narrative design, player experience, "
@@ -30,10 +32,7 @@ def get_last_error() -> str:
 
 
 def brief_error(provider: str, prefix: str, error: Exception) -> str:
-    detail = str(error)
-    lowered = detail.lower()
-    matched = next((handler for markers, handler in ERROR_HANDLERS if any(marker in lowered for marker in markers)), None)
-    return matched(provider) if matched else f"{prefix}: {short_detail(detail)}"
+    return error_message(str(error), provider, prefix, ERROR_HANDLERS, short_detail)
 
 
 def short_detail(detail: str) -> str:

@@ -2,7 +2,8 @@
 
 import logging
 
-from services.ai_core import _brief_error, _clear_error, _generate_text, _parse_json_response, _remember_error
+from services.ai_core import _generate_text
+from services.ai_json_validation import parse_validated_json
 
 logger = logging.getLogger(__name__)
 
@@ -49,15 +50,20 @@ Return ONLY valid JSON with this exact structure:
 
 
 def parse_minigame_question(raw: str) -> tuple:
-    try:
-        data = _parse_json_response(raw)
-        choices = data.get("choices", [])
-        if data.get("scenario") and len(choices) >= 2:
-            data["correct_choice"] = data.get("correct_choice") if data.get("correct_choice") in choices else choices[0]
-            _clear_error()
-            return (data, False)
-        _remember_error("AI question response was missing scenario or choices.")
-    except Exception as exc:
-        logger.warning("AI question parse error (%s) - using existing question.", exc)
-        _remember_error(_brief_error("AI", "Could not parse AI question response", exc))
-    return (None, True)
+    return parse_validated_json(
+        raw,
+        validator=normalize_minigame_question,
+        success_message="AI mini-game question generated successfully.",
+        missing_message="AI question response was missing scenario or choices.",
+        parse_prefix="Could not parse AI question response",
+        warning_template="AI question parse error (%s) - using existing question.",
+        logger=logger,
+    )
+
+
+def normalize_minigame_question(data: dict) -> bool:
+    choices = data.get("choices", [])
+    if not data.get("scenario") or len(choices) < 2:
+        return False
+    data["correct_choice"] = data.get("correct_choice") if data.get("correct_choice") in choices else choices[0]
+    return True

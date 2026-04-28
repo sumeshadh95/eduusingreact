@@ -3,7 +3,8 @@
 import json
 import logging
 
-from services.ai_core import _brief_error, _clear_error, _generate_text, _parse_json_response, _remember_error
+from services.ai_core import _generate_text
+from services.ai_json_validation import parse_validated_json
 
 logger = logging.getLogger(__name__)
 
@@ -55,14 +56,17 @@ Make the content educational, creative, and specifically relevant to how {studen
 
 
 def parse_personalized_chapters(raw: str) -> tuple:
-    try:
-        data = _parse_json_response(raw)
-        if "chapters" in data and len(data["chapters"]) >= 5:
-            logger.info("AI personalized chapters generated successfully.")
-            _clear_error()
-            return (data, False)
-        _remember_error("AI personalization response was missing chapters.")
-    except (json.JSONDecodeError, KeyError, IndexError) as exc:
-        logger.warning("Failed to parse AI personalization response (%s) - using fallback.", exc)
-        _remember_error(_brief_error("AI", "Could not parse AI personalization response", exc))
-    return (None, True)
+    return parse_validated_json(
+        raw,
+        validator=has_personalized_chapters,
+        success_message="AI personalized chapters generated successfully.",
+        missing_message="AI personalization response was missing chapters.",
+        parse_prefix="Could not parse AI personalization response",
+        warning_template="Failed to parse AI personalization response (%s) - using fallback.",
+        logger=logger,
+        exceptions=(json.JSONDecodeError, KeyError, IndexError),
+    )
+
+
+def has_personalized_chapters(data: dict) -> bool:
+    return "chapters" in data and len(data["chapters"]) >= 5
