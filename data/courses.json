@@ -1,0 +1,42 @@
+[
+  {
+    "course_id": "C001",
+    "course_name": "Game Development Basics",
+    "field": "Information Technology",
+    "ects": 3,
+    "keywords": ["game", "programming", "design", "unity", "prototype", "interactive media"],
+    "description": "An introductory course covering the fundamentals of game development, including game design principles, storytelling, player experience, basic programming logic, game mechanics, prototyping, and testing.",
+    "teacher_id": "T001",
+    "material_file": "game_development_basics.txt"
+  },
+  {
+    "course_id": "C002",
+    "course_name": "Cybersecurity Fundamentals",
+    "field": "Information Technology",
+    "ects": 3,
+    "keywords": ["cybersecurity", "hacking", "networking", "security", "linux", "penetration testing"],
+    "description": "A foundational course in cybersecurity covering network security, ethical hacking techniques, vulnerability assessment, penetration testing methodologies, and security best practices.",
+    "teacher_id": "T002",
+    "material_file": "cybersecurity_fundamentals.txt"
+  },
+  {
+    "course_id": "C003",
+    "course_name": "Introduction to Data Science",
+    "field": "Information Technology",
+    "ects": 3,
+    "keywords": ["data", "python", "statistics", "machine learning", "analytics", "visualization"],
+    "description": "An introductory course covering data analysis, statistical methods, machine learning basics, data visualization, and Python programming for data-driven insights.",
+    "teacher_id": "T003",
+    "material_file": "data_science_essentials.txt"
+  },
+  {
+    "course_id": "C004",
+    "course_name": "Digital Marketing Essentials",
+    "field": "Business",
+    "ects": 3,
+    "keywords": ["marketing", "social media", "SEO", "content", "branding", "analytics"],
+    "description": "A practical course covering digital marketing strategies, social media management, search engine optimization, content marketing, brand building, and marketing analytics.",
+    "teacher_id": "T004",
+    "material_file": "digital_marketing_basics.txt"
+  }
+]

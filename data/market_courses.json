@@ -1,0 +1,143 @@
+[
+  {
+    "course_id": "C001",
+    "trend": "Game Development",
+    "courses": [
+      {
+        "provider": "Unity Learn",
+        "title": "Junior Programmer Pathway",
+        "price_eur": 399,
+        "duration_weeks": 3,
+        "format": "Online self-paced",
+        "demand": "High",
+        "notes": "Strong beginner game programming demand with project portfolio focus."
+      },
+      {
+        "provider": "Coursera Partner",
+        "title": "Game Design and Development Specialization",
+        "price_eur": 420,
+        "duration_weeks": 4,
+        "format": "Online subscription",
+        "demand": "High",
+        "notes": "Broad game design curriculum with a certificate-style offer."
+      },
+      {
+        "provider": "Udemy Business",
+        "title": "Complete Unity Game Developer",
+        "price_eur": 389,
+        "duration_weeks": 2,
+        "format": "Online self-paced",
+        "demand": "Medium",
+        "notes": "Price-sensitive market with frequent discounting."
+      },
+      {
+        "provider": "FutureLearn",
+        "title": "Creative Coding for Games",
+        "price_eur": 405,
+        "duration_weeks": 3,
+        "format": "Online cohort",
+        "demand": "Medium",
+        "notes": "Cohort framing supports a premium over fully self-paced offers."
+      }
+    ]
+  },
+  {
+    "course_id": "C002",
+    "trend": "Ethical Hacking",
+    "courses": [
+      {
+        "provider": "EC-Council Academy",
+        "title": "Ethical Hacking Essentials",
+        "price_eur": 459,
+        "duration_weeks": 4,
+        "format": "Online certificate",
+        "demand": "High",
+        "notes": "Security certificates sustain premium pricing."
+      },
+      {
+        "provider": "Coursera Partner",
+        "title": "Cybersecurity Attack and Defense",
+        "price_eur": 415,
+        "duration_weeks": 4,
+        "format": "Online subscription",
+        "demand": "High",
+        "notes": "High interest but learner expectations include labs."
+      },
+      {
+        "provider": "Udemy Business",
+        "title": "Practical Ethical Hacking Labs",
+        "price_eur": 395,
+        "duration_weeks": 3,
+        "format": "Online self-paced",
+        "demand": "High",
+        "notes": "Competitive self-paced pricing with practical exercises."
+      }
+    ]
+  },
+  {
+    "course_id": "C003",
+    "trend": "Data Science",
+    "courses": [
+      {
+        "provider": "DataCamp",
+        "title": "Data Scientist with Python Track",
+        "price_eur": 410,
+        "duration_weeks": 4,
+        "format": "Online subscription",
+        "demand": "High",
+        "notes": "Learners compare against platform libraries and certificates."
+      },
+      {
+        "provider": "Coursera Partner",
+        "title": "Applied Data Science Specialization",
+        "price_eur": 430,
+        "duration_weeks": 4,
+        "format": "Online certificate",
+        "demand": "High",
+        "notes": "University-branded data science courses command higher willingness to pay."
+      },
+      {
+        "provider": "Udemy Business",
+        "title": "Python Data Analysis Bootcamp",
+        "price_eur": 379,
+        "duration_weeks": 3,
+        "format": "Online self-paced",
+        "demand": "Medium",
+        "notes": "Lower-cost alternative with less academic framing."
+      }
+    ]
+  },
+  {
+    "course_id": "C004",
+    "trend": "Digital Marketing",
+    "courses": [
+      {
+        "provider": "HubSpot Academy Pro",
+        "title": "Digital Marketing Strategy Certificate",
+        "price_eur": 389,
+        "duration_weeks": 3,
+        "format": "Online certificate",
+        "demand": "Medium",
+        "notes": "Strong brand recognition but many free alternatives exist."
+      },
+      {
+        "provider": "Coursera Partner",
+        "title": "Digital Marketing and Analytics",
+        "price_eur": 405,
+        "duration_weeks": 4,
+        "format": "Online subscription",
+        "demand": "Medium",
+        "notes": "Analytics angle improves perceived value."
+      },
+      {
+        "provider": "LinkedIn Learning",
+        "title": "Social Media Marketing Foundations",
+        "price_eur": 365,
+        "duration_weeks": 2,
+        "format": "Online self-paced",
+        "demand": "Medium",
+        "notes": "Market is broad, competitive, and price sensitive."
+      }
+    ]
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "trend": "Game Development",
+    "score": 92,
+    "status": "Trending",
+    "keywords": ["game", "unity", "programming", "design", "prototype", "interactive media"],
+    "reason": "High student interest in gaming, creative technology, and interactive media."
+  },
+  {
+    "trend": "Ethical Hacking",
+    "score": 90,
+    "status": "Trending",
+    "keywords": ["cybersecurity", "hacking", "networking", "penetration testing", "security", "linux"],
+    "reason": "Growing demand for cybersecurity professionals and ethical hacking skills."
+  },
+  {
+    "trend": "Data Science",
+    "score": 88,
+    "status": "Rising",
+    "keywords": ["data", "machine learning", "python", "statistics", "analytics", "visualization"],
+    "reason": "Increasing industry demand for data-driven decision making and AI applications."
+  },
+  {
+    "trend": "Digital Marketing",
+    "score": 85,
+    "status": "Rising",
+    "keywords": ["marketing", "social media", "SEO", "content", "analytics", "branding"],
+    "reason": "Rapid growth in digital-first business strategies and online brand building."
+  }
+]

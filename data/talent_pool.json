@@ -1,0 +1,72 @@
+[
+  {
+    "talent_id": "TP001",
+    "name": "Aino Korhonen",
+    "headline": "Senior Unity Developer and Game Programming Instructor",
+    "location": "Helsinki, Finland",
+    "source": "Xamk Recruitment Talent Pool",
+    "email": "aino.korhonen@example.com",
+    "linkedin_profile": "https://www.linkedin.com/in/aino-korhonen-demo",
+    "skills": ["Unity", "C#", "Game Design", "Programming", "Teaching", "Prototyping"],
+    "experience": "8 years building Unity prototypes and 4 years teaching applied game programming workshops.",
+    "availability": ["November", "January", "June"],
+    "teaching_modes": ["Online", "Hybrid"],
+    "notes": "Strong match for beginner-friendly game development and rapid prototyping."
+  },
+  {
+    "talent_id": "TP002",
+    "name": "Mikko Laine",
+    "headline": "Game Designer, Narrative Systems Lecturer",
+    "location": "Tampere, Finland",
+    "source": "LinkedIn Talent Solutions Demo Result",
+    "email": "mikko.laine@example.com",
+    "linkedin_profile": "https://www.linkedin.com/in/mikko-laine-demo",
+    "skills": ["Game Design", "Narrative Design", "Player Experience", "Playtesting", "Teaching"],
+    "experience": "Designed indie learning games and guest lectured on player experience, storytelling, and testing.",
+    "availability": ["October", "November", "February"],
+    "teaching_modes": ["Online", "On-campus"],
+    "notes": "Best for storytelling, player experience, and playtesting modules."
+  },
+  {
+    "talent_id": "TP003",
+    "name": "Sara Virtanen",
+    "headline": "Creative Technology Educator and Serious Games Specialist",
+    "location": "Espoo, Finland",
+    "source": "Xamk Recruitment Talent Pool",
+    "email": "sara.virtanen@example.com",
+    "linkedin_profile": "https://www.linkedin.com/in/sara-virtanen-demo",
+    "skills": ["Serious Games", "Healthcare Simulation", "Unity", "Instructional Design", "Hybrid Teaching"],
+    "experience": "Creates simulation games for healthcare education and trains instructors on game-based learning.",
+    "availability": ["January", "March", "June", "November"],
+    "teaching_modes": ["Online", "Hybrid", "On-campus"],
+    "notes": "Excellent bridge candidate for the nursing personalization demo."
+  },
+  {
+    "talent_id": "TP004",
+    "name": "Leo Nieminen",
+    "headline": "Prototype Engineer and Interactive Media Coach",
+    "location": "Oulu, Finland",
+    "source": "LinkedIn Talent Solutions Demo Result",
+    "email": "leo.nieminen@example.com",
+    "linkedin_profile": "https://www.linkedin.com/in/leo-nieminen-demo",
+    "skills": ["Godot", "Game Prototyping", "Python", "Programming Logic", "Student Coaching"],
+    "experience": "Coaches student teams through fast playable prototypes and beginner programming fundamentals.",
+    "availability": ["November", "December", "January"],
+    "teaching_modes": ["Online", "Hybrid"],
+    "notes": "Good fit for programming logic and rapid prototype sprint delivery."
+  },
+  {
+    "talent_id": "TP005",
+    "name": "Elina Salmi",
+    "headline": "UX Researcher for Games and Learning Analytics",
+    "location": "Turku, Finland",
+    "source": "Xamk Recruitment Talent Pool",
+    "email": "elina.salmi@example.com",
+    "linkedin_profile": "https://www.linkedin.com/in/elina-salmi-demo",
+    "skills": ["Playtesting", "User Research", "Learning Analytics", "Game UX", "Assessment Design"],
+    "experience": "Runs usability labs and assessment rubrics for interactive learning products.",
+    "availability": ["September", "November", "January"],
+    "teaching_modes": ["Online"],
+    "notes": "Strong supporting teacher for testing, feedback, and assessment."
+  }
+]

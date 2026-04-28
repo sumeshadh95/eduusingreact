@@ -1,0 +1,35 @@
+Introduction to Game Development
+
+Game development is the process of creating interactive digital experiences that entertain, educate, and engage players. It combines creativity with technology, requiring skills in design, programming, storytelling, and testing. Whether building a simple mobile puzzle or a complex 3D adventure, the core principles remain the same.
+
+Game Design Principles
+
+Good game design starts with a clear vision. Designers define the target audience, core mechanics, and overall experience they want to deliver. Key elements include player goals, rules, feedback systems, and progression. A well-designed game balances challenge and reward to keep players motivated and engaged throughout the experience.
+
+Storytelling and Narrative
+
+Stories give games meaning and emotional depth. Narrative design involves creating characters, worlds, and plotlines that draw players into the experience. Even simple games benefit from a narrative framework — a reason for the player to care about what happens next. Effective storytelling in games is interactive: the player's choices and actions shape the narrative.
+
+Player Experience and Engagement
+
+Player experience (PX) focuses on how the game feels to play. This includes user interface design, controls, pacing, difficulty curves, and emotional flow. Great PX design ensures that players feel competent, autonomous, and connected. Accessibility considerations — such as colorblind modes, adjustable difficulty, and clear instructions — are also essential.
+
+Simple Programming Logic
+
+Games rely on programming logic to function. Core concepts include variables, loops, conditionals, and event handling. A character moves when a key is pressed (event), health decreases when hit (variable update), enemies spawn in waves (loops), and the game ends when lives reach zero (conditional). Understanding these building blocks is the first step toward bringing game ideas to life.
+
+Game Mechanics and Systems
+
+Mechanics are the rules and systems that define gameplay. Common mechanics include scoring, resource management, turn-based or real-time actions, physics simulations, and AI-controlled opponents. Designing mechanics means deciding how different systems interact — for example, how a crafting system connects to inventory management and player progression.
+
+Prototyping
+
+Prototyping is the practice of building a rough, playable version of a game idea quickly. The goal is to test whether the core mechanics are fun before investing in full production. Prototypes are intentionally simple — placeholder graphics, minimal sound, basic UI. Tools like Unity, Godot, or even paper prototypes help designers validate ideas early and iterate fast.
+
+Testing and Feedback
+
+Testing is critical at every stage. Playtesting with real users reveals problems that designers cannot see on their own. Testers evaluate usability, difficulty balance, bugs, and overall enjoyment. Structured feedback — through surveys, observation, and analytics — helps the team prioritize improvements and polish the final product.
+
+Final Prototype and Concept Presentation
+
+The course culminates in a final prototype and concept presentation. Students demonstrate their game idea through a playable prototype, supported by a design document that explains their vision, target audience, mechanics, and development process. This exercise mirrors real-world game pitches and prepares students for collaborative creative work.

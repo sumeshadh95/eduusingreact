@@ -1,0 +1,34 @@
+[
+  {
+    "teacher_id": "T001",
+    "name": "Teacher A",
+    "skills": ["Game Design", "Unity", "Programming"],
+    "available_months": ["June", "November", "January"],
+    "available_modes": ["Online", "Hybrid", "On-campus"],
+    "hourly_rate": 80
+  },
+  {
+    "teacher_id": "T002",
+    "name": "Teacher B",
+    "skills": ["Cybersecurity", "Networking", "Penetration Testing"],
+    "available_months": ["March", "September", "November"],
+    "available_modes": ["Online", "Hybrid"],
+    "hourly_rate": 90
+  },
+  {
+    "teacher_id": "T003",
+    "name": "Teacher C",
+    "skills": ["Data Science", "Python", "Machine Learning"],
+    "available_months": ["February", "June", "October"],
+    "available_modes": ["Online", "Hybrid", "On-campus"],
+    "hourly_rate": 85
+  },
+  {
+    "teacher_id": "T004",
+    "name": "Teacher D",
+    "skills": ["Digital Marketing", "SEO", "Content Strategy"],
+    "available_months": ["April", "August", "November"],
+    "available_modes": ["Online", "Hybrid"],
+    "hourly_rate": 75
+  }
+]

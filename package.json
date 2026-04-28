@@ -1,0 +1,21 @@
+{
+  "name": "coursepilot-ai-react-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run api\" \"npm run dev:ui\"",
+    "dev:ui": "vite --host 127.0.0.1",
+    "api": ".venv\\\\Scripts\\\\python.exe -m uvicorn backend:app --host 127.0.0.1 --port 8000",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "concurrently": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "lucide-react": "latest"
+  }
+}
