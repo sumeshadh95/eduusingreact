@@ -50,6 +50,45 @@ const trendIcons = {
 
 const keywordTone = ["blue", "purple", "pink", "green", "teal", "violet"];
 
+const historicalIncome = [
+  { label: "Course A", revenue: 5200 },
+  { label: "Course B", revenue: 6100 },
+  { label: "Course C", revenue: 5900 },
+];
+
+const socialPlatforms = [
+  {
+    label: "Facebook",
+    src: "/social-icons/facebook.png",
+    creditUrl: "https://www.flaticon.com/free-icons/facebook",
+    creditTitle: "Facebook icons created by Freepik - Flaticon",
+  },
+  {
+    label: "Instagram",
+    src: "/social-icons/instagram.png",
+    creditUrl: "https://www.flaticon.com/free-icons/instagram",
+    creditTitle: "Instagram icons created by Freepik - Flaticon",
+  },
+  {
+    label: "X",
+    src: "/social-icons/twitter.png",
+    creditUrl: "https://www.flaticon.com/free-icons/brands-and-logotypes",
+    creditTitle: "Brands and logotypes icons created by Freepik - Flaticon",
+  },
+  {
+    label: "LinkedIn",
+    src: "/social-icons/linkedin.png",
+    creditUrl: "https://www.flaticon.com/free-icons/linkedin",
+    creditTitle: "Linkedin icons created by Freepik - Flaticon",
+  },
+];
+
+const fallbackPartnerEmails = [
+  "international.partners@example.edu",
+  "continuing.education@example.edu",
+  "career.services@example.edu",
+];
+
 const outcomeTemplates = [
   "Apply {domain} concepts to solve a practical {course} challenge from brief to presentation.",
   "Build a portfolio-ready {domain} artefact that demonstrates planning, implementation, testing, and reflection.",
@@ -296,6 +335,13 @@ function App() {
     });
   }
 
+  function updateMarketing(nextMarketing) {
+    setPlan((current) => ({
+      ...current,
+      marketing: nextMarketing,
+    }));
+  }
+
   async function generateMarketingImage(imageType) {
     if (!plan) return;
     await runAction(`Generating ${imageType} image with Gemini`, async () => {
@@ -438,8 +484,10 @@ function App() {
               imagePaths={imagePaths}
               brochure={brochure}
               onRegenerateMarketing={regenerateMarketing}
+              onMarketingChange={updateMarketing}
               onGenerateImage={generateMarketingImage}
               onGenerateBrochure={generateBrochure}
+              onBrochureChange={setBrochure}
               loading={loading}
             />
           )}
@@ -488,6 +536,14 @@ function uniqueSuggestions(items, currentValue = "", limit = 4) {
       return true;
     })
     .slice(0, limit);
+}
+
+function availablePartnerEmails(plan) {
+  return uniqueSuggestions([...(plan.talent || []).map((candidate) => candidate.email || ""), ...fallbackPartnerEmails], "", 8);
+}
+
+function isEmailLike(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
 }
 
 function outcomeSuggestions(plan, index, currentValue) {
@@ -1216,12 +1272,96 @@ function TeacherScreen({ plan, emails, onSearchTalent, onGenerateEmail, loading 
   );
 }
 
-function MarketingScreen({ plan, imagePaths, brochure, onRegenerateMarketing, onGenerateImage, onGenerateBrochure, loading }) {
+function MarketingScreen({
+  plan,
+  imagePaths,
+  brochure,
+  onRegenerateMarketing,
+  onMarketingChange,
+  onGenerateImage,
+  onGenerateBrochure,
+  onBrochureChange,
+  loading,
+}) {
+  const marketing = plan.marketing;
+  const partnerEmails = useMemo(() => availablePartnerEmails(plan), [plan]);
+  const [selectedPartnerEmails, setSelectedPartnerEmails] = useState([]);
+  const [partnerEmailInput, setPartnerEmailInput] = useState("");
+  const partnerEmailQuery = partnerEmailInput.trim().toLowerCase();
+  const partnerSuggestions = partnerEmailQuery
+    ? partnerEmails
+        .filter((email) => email.toLowerCase().includes(partnerEmailQuery))
+        .filter((email) => !selectedPartnerEmails.some((selected) => selected.toLowerCase() === email.toLowerCase()))
+        .slice(0, 5)
+    : [];
+
+  function patchMarketing(patch) {
+    onMarketingChange({ ...marketing, ...patch });
+  }
+
+  function updateSellingPoint(index, value) {
+    const sellingPoints = [...(marketing.sellingPoints || [])];
+    sellingPoints[index] = value;
+    patchMarketing({ sellingPoints });
+  }
+
+  function addSellingPoint() {
+    patchMarketing({ sellingPoints: [...(marketing.sellingPoints || []), "New selling point"] });
+  }
+
+  function removeSellingPoint(index) {
+    patchMarketing({ sellingPoints: (marketing.sellingPoints || []).filter((_, itemIndex) => itemIndex !== index) });
+  }
+
+  function addPartnerEmails(value = partnerEmailInput) {
+    const nextEmails = String(value)
+      .split(/[,\s;]+/)
+      .map((email) => email.trim())
+      .filter(isEmailLike);
+
+    if (!nextEmails.length) return;
+
+    setSelectedPartnerEmails((current) => {
+      const seen = new Set(current.map((email) => email.toLowerCase()));
+      const additions = nextEmails.filter((email) => {
+        const key = email.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      return [...current, ...additions];
+    });
+    setPartnerEmailInput("");
+  }
+
+  function removePartnerEmail(email) {
+    setSelectedPartnerEmails((current) => current.filter((item) => item !== email));
+  }
+
+  function handlePartnerEmailKeyDown(event) {
+    if (["Enter", "Tab", ","].includes(event.key) && partnerEmailInput.trim()) {
+      event.preventDefault();
+      addPartnerEmails(partnerEmailInput);
+    }
+
+    if (event.key === "Backspace" && !partnerEmailInput && selectedPartnerEmails.length) {
+      setSelectedPartnerEmails((current) => current.slice(0, -1));
+    }
+  }
+
+  function sendPartnerEmail() {
+    const recipients = selectedPartnerEmails.length ? selectedPartnerEmails : isEmailLike(partnerEmailInput) ? [partnerEmailInput.trim()] : [];
+    if (!recipients.length) return;
+    const subject = `Partnership opportunity: ${plan.programme?.title || "CoursePilot AI programme"}`;
+    const body = marketing.email || "";
+    window.location.href = `mailto:${recipients.join(",")}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
   return (
     <div className="content-stack">
-      <ScreenHeader title="Marketing" description={plan.marketing.tagline} />
+      <ScreenHeader title="Marketing" description={marketing.tagline} />
       <ActionRow
-        label={plan.marketing.usedFallback ? "Using offline fallback marketing content" : `Generated by ${plan.provider?.name || "AI"}`}
+        label={marketing.usedFallback ? "Using offline fallback marketing content" : `Generated by ${plan.provider?.name || "AI"}`}
         buttonLabel="Regenerate Marketing Copy"
         onClick={onRegenerateMarketing}
         disabled={Boolean(loading)}
@@ -1229,16 +1369,78 @@ function MarketingScreen({ plan, imagePaths, brochure, onRegenerateMarketing, on
 
       <div className="marketing-grid">
         <article className="copy-card wide">
+          <span className="panel-label">Tagline</span>
+          <EditorInput value={marketing.tagline || ""} onChange={(value) => patchMarketing({ tagline: value })} />
           <span className="panel-label">Website Description</span>
-          <p>{plan.marketing.website}</p>
+          <EditorTextarea value={marketing.website || ""} onChange={(value) => patchMarketing({ website: value })} />
         </article>
         <article className="copy-card">
-          <span className="panel-label">Social Post</span>
-          <p>{plan.marketing.social}</p>
+          <div className="copy-card-header">
+            <span className="panel-label">Social Post</span>
+            <div className="social-platforms" aria-label="Available social posting channels">
+              <span>Post on:</span>
+              {socialPlatforms.map((platform) => (
+                <a
+                  className="social-logo"
+                  href={platform.creditUrl}
+                  key={platform.label}
+                  title={platform.creditTitle}
+                  aria-label={platform.label}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src={platform.src} alt="" />
+                </a>
+              ))}
+            </div>
+          </div>
+          <EditorTextarea value={marketing.social || ""} onChange={(value) => patchMarketing({ social: value })} />
         </article>
         <article className="copy-card">
           <span className="panel-label">Partner Email</span>
-          <pre>{plan.marketing.email}</pre>
+          <textarea
+            className="editor-textarea marketing-email-textarea"
+            value={marketing.email || ""}
+            onChange={(event) => patchMarketing({ email: event.target.value })}
+          />
+          <div className="partner-email-composer">
+            <div className="partner-email-label-row">
+              <span className="panel-label">Send to partners</span>
+              <button className="secondary-action compact" type="button" disabled={!partnerEmailInput.trim()} onClick={() => addPartnerEmails()}>
+                Add
+              </button>
+            </div>
+            <div className="partner-chip-input">
+              {selectedPartnerEmails.map((email) => (
+                <span className="partner-email-chip" key={email}>
+                  {email}
+                  <button type="button" onClick={() => removePartnerEmail(email)} aria-label={`Remove ${email}`}>
+                    x
+                  </button>
+                </span>
+              ))}
+              <input
+                type="email"
+                value={partnerEmailInput}
+                placeholder={selectedPartnerEmails.length ? "Add more recipients" : "Type partner emails"}
+                onChange={(event) => setPartnerEmailInput(event.target.value)}
+                onKeyDown={handlePartnerEmailKeyDown}
+              />
+            </div>
+            {partnerSuggestions.length > 0 && (
+              <div className="partner-email-suggestions">
+                {partnerSuggestions.map((email) => (
+                  <button type="button" key={email} onClick={() => addPartnerEmails(email)}>
+                    {email}
+                  </button>
+                ))}
+              </div>
+            )}
+            <button className="primary-cta" type="button" disabled={!selectedPartnerEmails.length && !isEmailLike(partnerEmailInput)} onClick={sendPartnerEmail}>
+              Send
+            </button>
+            <small>Press Enter or comma to add each recipient.</small>
+          </div>
         </article>
       </div>
 
@@ -1266,15 +1468,22 @@ function MarketingScreen({ plan, imagePaths, brochure, onRegenerateMarketing, on
       </div>
 
       <article className="selling-panel">
-        <h3>Selling Points</h3>
-        <ul className="clean-list">
-          {plan.marketing.sellingPoints.map((point) => (
-            <li key={point}>
-              <Check size={15} />
-              {point}
-            </li>
+        <div className="copy-card-header">
+          <h3>Selling Points</h3>
+          <button className="secondary-action" type="button" onClick={addSellingPoint}>
+            Add Point
+          </button>
+        </div>
+        <div className="programme-editor-list">
+          {(marketing.sellingPoints || []).map((point, index) => (
+            <div className="editable-row" key={`selling-${index}`}>
+              <textarea value={point} onChange={(event) => updateSellingPoint(index, event.target.value)} />
+              <button type="button" onClick={() => removeSellingPoint(index)} aria-label="Remove selling point">
+                x
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       </article>
 
       <article className="copy-card">
@@ -1284,7 +1493,11 @@ function MarketingScreen({ plan, imagePaths, brochure, onRegenerateMarketing, on
             Generate Brochure
           </button>
         </div>
-        {brochure ? <pre>{brochure}</pre> : <p>Generate a professional brochure or pamphlet for the programme using AI.</p>}
+        {brochure ? (
+          <textarea className="editor-textarea marketing-email-textarea" value={brochure} onChange={(event) => onBrochureChange(event.target.value)} />
+        ) : (
+          <p>Generate a professional brochure or pamphlet for the programme using AI.</p>
+        )}
       </article>
     </div>
   );
@@ -1293,26 +1506,206 @@ function MarketingScreen({ plan, imagePaths, brochure, onRegenerateMarketing, on
 function IncomeScreen({ plan }) {
   const [students, setStudents] = useState(25);
   const [price, setPrice] = useState(plan.market?.recommendedPrice || 450);
-  const [costs, setCosts] = useState(4250);
+  const costs = 4250;
   const result = computeFinance(students, price, costs);
+  const historicalAverage = historicalIncome.reduce((total, item) => total + item.revenue, 0) / historicalIncome.length;
+  const gainPercentage = historicalAverage ? ((result.revenue - historicalAverage) / historicalAverage) * 100 : 0;
+  const profitMargin = result.revenue > 0 ? (result.profit / result.revenue) * 100 : 0;
+  const generatedCourseName = plan.programme?.title || plan.course?.course_name || "Generated Course";
+  const forecastItems = [...historicalIncome, { label: generatedCourseName, revenue: result.revenue, projected: true }];
 
   return (
-    <div className="content-stack">
+    <div className="content-stack income-page">
       <ScreenHeader title="Income" description="Revenue, profit, and break-even estimate." />
 
-      <div className="control-grid">
-        <RangeControl label="Expected Students" value={students} min={5} max={80} step={1} onChange={setStudents} />
-        <RangeControl label="Price Per Student" value={price} min={150} max={1200} step={25} prefix="EUR " onChange={setPrice} />
-        <RangeControl label="Estimated Costs" value={costs} min={1000} max={16000} step={250} prefix="EUR " onChange={setCosts} />
+      <div className="income-dashboard-grid">
+        <article className="income-card income-planner-card">
+          <div className="income-card-head">
+            <span className="income-icon yellow">
+              <ClipboardList size={20} />
+            </span>
+            <div>
+              <h3>Income Planner</h3>
+              <p>Adjust assumptions to simulate projected income.</p>
+            </div>
+          </div>
+
+          <div className="income-slider-list">
+            <IncomeSliderRow
+              icon={UsersRound}
+              label="Expected Students"
+              value={students}
+              min={5}
+              max={80}
+              step={1}
+              onChange={setStudents}
+            />
+            <IncomeSliderRow
+              icon={CircleDollarSign}
+              label="Price Per Student"
+              value={price}
+              min={150}
+              max={1200}
+              step={25}
+              prefix="EUR "
+              onChange={setPrice}
+            />
+            <IncomeStaticRow icon={Target} label="Total Estimated Income" value={formatEUR(result.revenue)} helper="Expected students x price per student" />
+          </div>
+        </article>
+
+        <article className="income-card income-forecast-card">
+          <div className="income-card-head">
+            <span className="income-icon blue">
+              <BarChart3 size={20} />
+            </span>
+            <div>
+              <h3>Income Forecast</h3>
+              <p>Compare with similar courses</p>
+            </div>
+          </div>
+
+          <div className="income-forecast-body">
+            <div className="income-chart-panel">
+              <span className="income-chart-title">Revenue Comparison (EUR)</span>
+              <IncomeForecastChart items={forecastItems} />
+            </div>
+
+            <aside className="income-gain-panel">
+              <span>Projected Gain</span>
+              <div
+                className={`income-gain-ring ${gainPercentage < 0 ? "negative" : ""}`}
+                style={{ "--gain-progress": `${Math.min(100, Math.abs(Math.round(gainPercentage)))}%` }}
+              >
+                <strong>{formatPercent(gainPercentage)}</strong>
+              </div>
+              <p>vs. historical average</p>
+              <div className="income-average-box">
+                <small>Historical average</small>
+                <strong>{formatEUR(Math.round(historicalAverage))}</strong>
+              </div>
+            </aside>
+          </div>
+
+          <p className="income-footnote">
+            <HelpCircle size={15} />
+            Based on mock data from similar short courses.
+          </p>
+        </article>
       </div>
 
-      <div className="metric-grid">
-        <MetricTile label="Revenue" value={`EUR ${result.revenue.toLocaleString()}`} />
-        <MetricTile label="Profit" value={`EUR ${result.profit.toLocaleString()}`} tone={result.profit >= 0 ? "good" : "alert"} />
-        <MetricTile label="Break-even Price" value={`EUR ${Math.round(result.breakEvenPrice).toLocaleString()}`} />
-        <MetricTile label="Break-even Students" value={`~${result.breakEvenStudents}`} />
+      <div className="income-kpi-grid">
+        <IncomeKpiCard icon={BarChart3} label="Revenue" value={formatEUR(result.revenue)} helper="Total projected revenue" />
+        <IncomeKpiCard
+          icon={LineChart}
+          label="Profit"
+          value={formatEUR(result.profit)}
+          helper="After estimated costs"
+          tone={result.profit >= 0 ? "good" : "alert"}
+        />
+        <IncomeKpiCard icon={Target} label="Gain" value={formatPercent(gainPercentage)} helper="vs. historical average" />
+        <IncomeKpiCard icon={CircleDollarSign} label="Profit Margin" value={`${Math.round(profitMargin)}%`} helper="Profit as % of revenue" />
+        <IncomeKpiCard
+          icon={Target}
+          label="Break-even Price"
+          value={formatEUR(Math.round(result.breakEvenPrice))}
+          helper="Minimum price"
+        />
+        <IncomeKpiCard icon={UsersRound} label="Break-even Students" value={`~${result.breakEvenStudents}`} helper="Students needed" />
       </div>
     </div>
+  );
+}
+
+function IncomeSliderRow({ icon: Icon, label, value, min, max, step, prefix = "", onChange }) {
+  return (
+    <label className="income-slider-row">
+      <span className="income-slider-icon">
+        <Icon size={20} />
+      </span>
+      <span className="income-slider-copy">
+        <span>{label}</span>
+        <strong>
+          {prefix}
+          {Number(value).toLocaleString()}
+        </strong>
+      </span>
+      <span className="income-slider-control">
+        <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} />
+        <span className="income-slider-bounds">
+          <small>
+            {prefix}
+            {Number(min).toLocaleString()}
+          </small>
+          <small>
+            {prefix}
+            {Number(max).toLocaleString()}
+          </small>
+        </span>
+      </span>
+    </label>
+  );
+}
+
+function IncomeStaticRow({ icon: Icon, label, value, helper }) {
+  return (
+    <div className="income-slider-row income-static-row">
+      <span className="income-slider-icon">
+        <Icon size={20} />
+      </span>
+      <span className="income-slider-copy">
+        <span>{label}</span>
+        <strong>{value}</strong>
+        <small>{helper}</small>
+      </span>
+      <span className="income-static-note">Calculated automatically</span>
+    </div>
+  );
+}
+
+function IncomeForecastChart({ items }) {
+  const chartMax = Math.max(10000, ...items.map((item) => item.revenue));
+  const axisValues = [chartMax, chartMax * 0.75, chartMax * 0.5, chartMax * 0.25, 0];
+
+  return (
+    <div className="income-chart">
+      <div className="income-chart-axis" aria-hidden="true">
+        {axisValues.map((value) => (
+          <span key={value}>{formatAxisValue(value)}</span>
+        ))}
+      </div>
+      <div className="income-chart-bars">
+        {items.map((item) => {
+          const height = Math.max(8, (item.revenue / chartMax) * 100);
+          return (
+            <div className="income-bar-group" key={item.label}>
+              <span className="income-bar-value">{Number(item.revenue).toLocaleString()}</span>
+              <span className="income-bar-track">
+                <span className={`income-bar ${item.projected ? "projected" : ""}`} style={{ height: `${height}%` }} />
+              </span>
+              <span className="income-bar-label" title={item.label}>
+                {item.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function IncomeKpiCard({ icon: Icon, label, value, helper, tone = "" }) {
+  return (
+    <article className={`income-kpi-card ${tone}`}>
+      <span className="income-kpi-icon">
+        <Icon size={22} />
+      </span>
+      <div>
+        <span>{label}</span>
+        <strong>{value}</strong>
+        <small>{helper}</small>
+      </div>
+    </article>
   );
 }
 
@@ -1373,6 +1766,19 @@ function ActionRow({ label, buttonLabel, onClick, disabled }) {
 function formatEUR(value) {
   const amount = Number(value || 0);
   return `EUR ${amount.toLocaleString()}`;
+}
+
+function formatPercent(value) {
+  const rounded = Math.round(value);
+  return `${rounded > 0 ? "+" : ""}${rounded}%`;
+}
+
+function formatAxisValue(value) {
+  if (value >= 1000) {
+    const thousands = value / 1000;
+    return `${Number.isInteger(thousands) ? thousands : thousands.toFixed(1)}K`;
+  }
+  return Math.round(value).toLocaleString();
 }
 
 function StatusChip({ status }) {
